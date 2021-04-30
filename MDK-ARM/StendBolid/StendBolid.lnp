@@ -3,6 +3,7 @@
 "stendbolid\main.o"
 "stendbolid\stm32l0xx_it.o"
 "stendbolid\stm32l0xx_hal_msp.o"
+"stendbolid\hdlc.o"
 "stendbolid\stm32l0xx_hal_adc.o"
 "stendbolid\stm32l0xx_hal_adc_ex.o"
 "stendbolid\stm32l0xx_hal.o"
