@@ -1,0 +1,88 @@
+Configuration	StendBolid
+STM32CubeMX 	6.2.0
+Date	04/30/2021
+MCU	STM32L010F4Px
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN4	ADC_IN4	PA4
+SYS	Serial_Wire	SYS_SWCLK	PA14
+SYS	Serial_Wire	SYS_SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+TIM21	Internal Clock	TIM21_VS_ClockSourceINT	VP_TIM21_VS_ClockSourceINT
+USART2	Asynchronous	USART2_RX	PA0-CK_IN
+USART2	Asynchronous	USART2_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PC14-OSC32_IN	GPIO_Input	KEY1
+3	PC15-OSC32_OUT	GPIO_Input	KEY2
+6	PA0-CK_IN	USART2_RX	
+7	PA1	GPIO_Output	SET
+8	PA2	USART2_TX	
+9	PA3	GPIO_Output	PWM
+10	PA4	ADC_IN4	
+11	PA5	GPIO_Input	res4
+12	PA6	GPIO_Input	res3
+13	PA7	GPIO_Input	res2
+14	PB1	GPIO_Input	res1
+17	PA9	GPIO_Output	LED1
+18	PA10	GPIO_Output	LED2
+19	PA13	SYS_SWDIO	
+20	PA14	SYS_SWCLK	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC	IN4	ADC_IN4	PA4
+SYS	Serial_Wire	SYS_SWCLK	PA14
+SYS	Serial_Wire	SYS_SWDIO	PA13
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+TIM21	Internal Clock	TIM21_VS_ClockSourceINT	VP_TIM21_VS_ClockSourceINT
+USART2	Asynchronous	USART2_RX	PA0-CK_IN
+USART2	Asynchronous	USART2_TX	PA2
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+2	PC14-OSC32_IN	GPIO_Input	KEY1
+3	PC15-OSC32_OUT	GPIO_Input	KEY2
+6	PA0-CK_IN	USART2_RX	
+7	PA1	GPIO_Output	SET
+8	PA2	USART2_TX	
+9	PA3	GPIO_Output	PWM
+10	PA4	ADC_IN4	
+11	PA5	GPIO_Input	res4
+12	PA6	GPIO_Input	res3
+13	PA7	GPIO_Input	res2
+14	PB1	GPIO_Input	res1
+17	PA9	GPIO_Output	LED1
+18	PA10	GPIO_Output	LED2
+19	PA13	SYS_SWDIO	
+20	PA14	SYS_SWCLK	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : StendBolid
+Project Folder : D:\Works\STProj\Stend\StendBolid
+Toolchain / IDE : MDK-ARM V5.27
+Firmware Package Name and Version : STM32Cube FW_L0 V1.12.0
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy all used libraries into the project folder
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
