@@ -1966,13 +1966,13 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConf
       ADC->CCR |= ADC_CCR_VREFEN;   
     }
     
-#if defined (STM32L053xx) || defined (STM32L063xx) || defined (STM32L073xx) || defined (STM32L083xx)
-    /* If Vlcd channel is selected, then enable the internal buffers and path   */
-    if (((sConfig->Channel & ADC_CHANNEL_MASK) & ADC_CHANNEL_VLCD) == (ADC_CHANNEL_VLCD & ADC_CHANNEL_MASK))
-    {
-      ADC->CCR |= ADC_CCR_VLCDEN;   
-    }
-#endif
+//#if defined (STM32L053xx) || defined (STM32L063xx) || defined (STM32L073xx) || defined (STM32L083xx)
+//    /* If Vlcd channel is selected, then enable the internal buffers and path   */
+//    if (((sConfig->Channel & ADC_CHANNEL_MASK) & ADC_CHANNEL_VLCD) == (ADC_CHANNEL_VLCD & ADC_CHANNEL_MASK))
+//    {
+//      ADC->CCR |= ADC_CCR_VLCDEN;   
+//    }
+//#endif
   }
   else
   {
@@ -1996,13 +1996,13 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef* hadc, ADC_ChannelConf
       ADC->CCR &= ~ADC_CCR_VREFEN;   
     }
     
-#if defined (STM32L053xx) || defined (STM32L063xx) || defined (STM32L073xx) || defined (STM32L083xx)
-    /* If Vlcd channel is selected, then enable the internal buffers and path   */
-    if (((sConfig->Channel & ADC_CHANNEL_MASK) & ADC_CHANNEL_VLCD) == (ADC_CHANNEL_VLCD & ADC_CHANNEL_MASK))
-    {
-      ADC->CCR &= ~ADC_CCR_VLCDEN;   
-    }
-#endif
+//#if defined (STM32L053xx) || defined (STM32L063xx) || defined (STM32L073xx) || defined (STM32L083xx)
+//    /* If Vlcd channel is selected, then enable the internal buffers and path   */
+//    if (((sConfig->Channel & ADC_CHANNEL_MASK) & ADC_CHANNEL_VLCD) == (ADC_CHANNEL_VLCD & ADC_CHANNEL_MASK))
+//    {
+//      ADC->CCR &= ~ADC_CCR_VLCDEN;   
+//    }
+//#endif
   }
   
   /* Process unlocked */
