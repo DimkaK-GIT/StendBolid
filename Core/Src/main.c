@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "typedef.h"
 
 /* USER CODE END Includes */
 
@@ -57,12 +58,34 @@ static void MX_TIM21_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
+pwmStateHeader pwm;
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+        if(htim->Instance == TIM21) //check if the interrupt comes from TIM1
+        {
+					if(pwm.value == 0)
+						HAL_GPIO_WritePin(GPIOA, PWM_Pin, GPIO_PIN_RESET);
+					if(pwm.value == 255)
+						HAL_GPIO_WritePin(GPIOA, PWM_Pin, GPIO_PIN_SET);
+					if(pwm.enable == 0)
+						return;
+					if(++pwm.count == pwm.countMax)
+					{
+						pwm.count = 0;
+						HAL_GPIO_WritePin(GPIOA, PWM_Pin, GPIO_PIN_SET);
+					}
+					if(pwm.count == pwm.value)
+					{
+						HAL_GPIO_WritePin(GPIOA, PWM_Pin, GPIO_PIN_RESET);
+					}
+				}
+					
+}
 /* USER CODE END 0 */
 
 /**
@@ -97,7 +120,15 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC_Init();
   /* USER CODE BEGIN 2 */
-
+	
+	pwm.countMax = 255;
+	pwm.count = 0;
+	pwm.enable = 0;
+	pwm.value = 0;
+	pwm.state = 0;
+	
+	HAL_TIM_Base_Start_IT(&htim21);
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */

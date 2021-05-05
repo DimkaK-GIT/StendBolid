@@ -1,6 +1,7 @@
 #ifndef __TYPEDEF_H
 #define __TYPEDEF_H
 
+#include "main.h"
 typedef struct
 			{
 				uint8_t count;		// счетчик PWM

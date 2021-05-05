@@ -1,6 +1,6 @@
 Dependencies for Project 'StendBolid', Target 'StendBolid': (DO NOT MODIFY !)
 F (startup_stm32l010x4.s)(0x608BF50E)(--cpu Cortex-M0+ -g --apcs=interwork --pd "__MICROLIB SETA 1"-ID:\Works\STProj\Stend\StendBolid\MDK-ARM\RTE\_StendBolid-ID:\OtherBrown\KeilARM\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\OtherBrown\KeilARM\ARM\PACK\Keil\STM32L0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include--pd "__UVISION_VERSION SETA 522" --pd "_RTE_ SETA 1" --pd "STM32L010x4 SETA 1"--list startup_stm32l010x4.lst --xref -o stendbolid\startup_stm32l010x4.o --depend stendbolid\startup_stm32l010x4.d)
-F (../Core/Src/main.c)(0x608BFAFB)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I ../Drivers/CMSIS/Include-ID:\Works\STProj\Stend\StendBolid\MDK-ARM\RTE\_StendBolid-ID:\OtherBrown\KeilARM\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\OtherBrown\KeilARM\ARM\PACK\Keil\STM32L0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include-D__UVISION_VERSION="522" -D_RTE_ -DSTM32L010x4 -DUSE_HAL_DRIVER -DSTM32L010x4-o stendbolid\main.o --omf_browse stendbolid\main.crf --depend stendbolid\main.d)
+F (../Core/Src/main.c)(0x609246D5)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I ../Drivers/CMSIS/Include-ID:\Works\STProj\Stend\StendBolid\MDK-ARM\RTE\_StendBolid-ID:\OtherBrown\KeilARM\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\OtherBrown\KeilARM\ARM\PACK\Keil\STM32L0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include-D__UVISION_VERSION="522" -D_RTE_ -DSTM32L010x4 -DUSE_HAL_DRIVER -DSTM32L010x4-o stendbolid\main.o --omf_browse stendbolid\main.crf --depend stendbolid\main.d)
 I (../Core/Inc/main.h)(0x608BF50D)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x608BBB7A)
 I (../Core/Inc/stm32l0xx_hal_conf.h)(0x608BF50C)
@@ -35,9 +35,7 @@ I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h)(0x608BBB7A)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h)(0x608BBB7A)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart.h)(0x608BBB7A)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_uart_ex.h)(0x608BBB7A)
-I (../Core/Inc/typedef.h)(0x608BF148)
-I (../Core/Inc/hdlc.h)(0x604A1F5C)
-I (D:\OtherBrown\KeilARM\ARM\ARMCC\include\string.h)(0x57F64D08)
+I (../Core/Inc/typedef.h)(0x609242AD)
 F (../Core/Src/stm32l0xx_it.c)(0x608BF50C)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I ../Drivers/CMSIS/Include-ID:\Works\STProj\Stend\StendBolid\MDK-ARM\RTE\_StendBolid-ID:\OtherBrown\KeilARM\ARM\PACK\ARM\CMSIS\5.7.0\CMSIS\Core\Include-ID:\OtherBrown\KeilARM\ARM\PACK\Keil\STM32L0xx_DFP\2.1.0\Drivers\CMSIS\Device\ST\STM32L0xx\Include-D__UVISION_VERSION="522" -D_RTE_ -DSTM32L010x4 -DUSE_HAL_DRIVER -DSTM32L010x4-o stendbolid\stm32l0xx_it.o --omf_browse stendbolid\stm32l0xx_it.crf --depend stendbolid\stm32l0xx_it.d)
 I (../Core/Inc/main.h)(0x608BF50D)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x608BBB7A)
