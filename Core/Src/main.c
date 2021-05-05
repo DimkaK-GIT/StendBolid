@@ -23,7 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "typedef.h"
-
+#include "hdlc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,8 +57,13 @@ static void MX_GPIO_Init(void);
 static void MX_TIM21_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_ADC_Init(void);
+
 /* USER CODE BEGIN PFP */
+
 pwmStateHeader pwm;
+uint8_t recUart;
+extern interfaceHDLC_TX masterTX;
+extern interfaceHDLC_RX masterRX;
 
 /* USER CODE END PFP */
 
@@ -86,6 +91,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				}
 					
 }
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	switch((uint32_t)huart->Instance)
+	{
+		case (uint32_t)USART2: // 433MHz
+					recHDLC(recUart);
+					HAL_UART_Receive_IT(&huart2, (void *)&recUart, 1);													
+					break;
+	}		
+	__NOP();
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -128,6 +146,8 @@ int main(void)
 	pwm.state = 0;
 	
 	HAL_TIM_Base_Start_IT(&htim21);
+	HAL_UART_Receive_IT(&huart2, (void *)&recUart, 1);	
+	
 	
   /* USER CODE END 2 */
 
@@ -135,7 +155,24 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+		if(masterRX.Command != 0)
+		{
+			switch(masterRX.Command)
+			{
+				case 0x01:
+									pwm.value = masterRX.arg[0];
+				
+									break;
+				case 0xff:
+									break;
+				default:
+									break;
+						
+			}
+			masterRX.Command = 0;
+		}
+    
+		/* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
