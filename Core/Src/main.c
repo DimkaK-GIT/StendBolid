@@ -104,6 +104,38 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	__NOP();
 }
 
+void sendAnswer (uint8_t Command, uint8_t* buff, uint8_t count)
+{
+	
+  HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_SET);
+	struct_HDLC_Header MasterHDLC;
+	MasterHDLC.ADR_DST = 0x31;
+	MasterHDLC.ADR_SRC = 0x32;
+	send_Master_HDLC (MasterHDLC,Command, (char*)buff, count);
+	
+	
+  HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_RESET);
+	
+}
+
+void led1 (uint8_t on)
+{
+	if(on == 0)
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+	else
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+}
+
+void led2 (uint8_t on)
+{
+	if(on == 0)
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+	else
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+}
+
+
+
 /* USER CODE END 0 */
 
 /**
@@ -113,7 +145,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uint8_t bufAnsw[10];
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -147,7 +180,8 @@ int main(void)
 	
 	HAL_TIM_Base_Start_IT(&htim21);
 	HAL_UART_Receive_IT(&huart2, (void *)&recUart, 1);	
-	
+	HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_RESET);
+
 	
   /* USER CODE END 2 */
 
@@ -161,8 +195,19 @@ int main(void)
 			{
 				case 0x01:
 									pwm.value = masterRX.arg[0];
-				
+									bufAnsw[0] = pwm.value;
+									bufAnsw[1] = pwm.countMax;
+									sendAnswer(masterRX.Command,bufAnsw,2);
 									break;
+				case 0x02:
+									led1(masterRX.arg[0]);
+									sendAnswer(masterRX.Command,bufAnsw,0);
+									break;
+				case 0x03:
+									led2(masterRX.arg[0]);
+									sendAnswer(masterRX.Command,bufAnsw,0);
+									break;
+				
 				case 0xff:
 									break;
 				default:
