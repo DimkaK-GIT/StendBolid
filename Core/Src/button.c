@@ -7,8 +7,8 @@
   * @attention
   *
   * 
-  * эта програмулина обеспечивает считывание клавиатуры 4х4 без обработки 
-  * длительности нажатия и двойного нажатия кнопок.
+  * 
+  * 
   * 
   *
   ******************************************************************************
@@ -49,8 +49,8 @@ void ProcessKey (buttonStructHeader *Keys)
 			Keys->state = shortPress;
 		else
 			Keys->state = noPress;
-		if(Keys->counter > 1)
-			Keys->counter--;
+		
+		Keys->counter = 0;
 	}
 	else
 	{

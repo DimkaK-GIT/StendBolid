@@ -19,5 +19,6 @@ typedef struct
 
 void KeyInit(buttonStructHeader *Keys, GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, uint16_t shortDelay, uint16_t longDelay);
 uint8_t ReadKey(buttonStructHeader *Keys);
+void ProcessKey (buttonStructHeader *Keys);
 
 #endif // __BUTTON_H

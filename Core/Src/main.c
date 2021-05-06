@@ -24,6 +24,8 @@
 /* USER CODE BEGIN Includes */
 #include "typedef.h"
 #include "hdlc.h"
+#include "button.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,6 +67,9 @@ uint8_t recUart;
 extern interfaceHDLC_TX masterTX;
 extern interfaceHDLC_RX masterRX;
 
+buttonStructHeader KeyA;
+buttonStructHeader KeyB;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -83,6 +88,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					{
 						pwm.count = 0;
 						HAL_GPIO_WritePin(GPIOA, PWM_Pin, GPIO_PIN_SET);
+				    ProcessKey(&KeyA);
+						ProcessKey(&KeyB);
 					}
 					if(pwm.count == pwm.value)
 					{
@@ -182,6 +189,9 @@ int main(void)
 	HAL_UART_Receive_IT(&huart2, (void *)&recUart, 1);	
 	HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_RESET);
 
+	KeyInit(&KeyA,KEY1_GPIO_Port,KEY1_Pin,7,250);
+	KeyInit(&KeyB,KEY2_GPIO_Port,KEY2_Pin,7,250);
+
 	
   /* USER CODE END 2 */
 
@@ -216,7 +226,28 @@ int main(void)
 			}
 			masterRX.Command = 0;
 		}
-    
+		uint8_t keystat = ReadKey(&KeyA);
+		uint8_t keystatB = ReadKey(&KeyB);
+		
+		if(keystat == longPress)
+		{
+			sendAnswer(0xf0,bufAnsw,0);
+		}
+
+		if(keystatB == longPress)
+		{
+			sendAnswer(0xf1,bufAnsw,0);
+		}
+		if(keystat == shortPress)
+		{
+			sendAnswer(0xf2,bufAnsw,0);
+		}
+		
+		if(keystatB == shortPress)
+		{
+			sendAnswer(0xf3,bufAnsw,0);
+		}
+
 		/* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
