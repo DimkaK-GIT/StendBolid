@@ -32,7 +32,7 @@ void KeyInit(buttonStructHeader *Keys, GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, u
 uint8_t ReadKey(buttonStructHeader *Keys)
 {
 	uint8_t tmp = Keys->state;	
-	if(tmp == 1) // shortPress
+	if(tmp == shortPress) // shortPress
 		Keys->state = 0;
 	
 	return tmp;
