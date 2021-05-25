@@ -1,0 +1,133 @@
+import time
+import serial
+import serial.tools.list_ports
+from threading import Thread, Event
+import datetime
+
+
+
+class Sensor:
+    def __init__(self, dev=0, line=0, sens=0, state1=0, state2=0, state3=0, cevent=0, cphysical=0,flags=0):
+        self.deviceID = dev
+        self.line = line
+        self.sensor = sens
+        self.current_state = state1
+        self.last_state = state2
+        self.accumulate_state = state3
+        self.c_event = cevent
+        self.c_physical = cphysical
+        self.flags = flags
+
+    def __str__(self):
+        return "Sensor {0}.{1}\tState: {2} ({3}/{4})\tcount= {5}, physical={6}\tflags{7}\n".format(self.line, self.sens, self.current_state, self.last_state, self.accumulate_state, self.c_event, self.c_physical, self.flags)
+
+
+ser=serial.Serial()
+def get_coms():
+    lst = serial.tools.list_ports.comports()
+    connected = []
+    for element in lst:
+        connected.append(element.device)
+    return connected
+
+def com_open(connected):
+        try:
+            ser = serial.Serial(str(connected), 57600)
+            if ser.is_open:
+                print (str(connected) + ' connected')
+                return ser
+        except Exception:
+            ser = None
+            return ser
+
+def check_package(package):
+    if '7d' in package:
+        l = 0
+        for i in range(0, len(package)):
+            if package[ i - l ] == '7d':
+                if package[ i + 1 - l ] == '5d':
+                    del package[ i + 1 - l ]
+                    l += 1
+                elif package[ i + 1 - l ] == '5e':
+                    package[ i - l ] = '7e'
+                    del package[ i + 1 - l]
+                    l += 1
+    return package
+
+def parse_pack(package):
+    if package[0] == 'ff':
+        dev = int(package[1], base = 16)
+        line = int(package[2], base = 16)
+        sens = int(package[3], base = 16)
+        current_data = int((package[5]) + package[6]), base = 16)
+        last_data = int((package[7] + package[8]), base = 16)
+        accumul = int((package[9] + package[10]),  base = 16)
+        cevent = int((package[11]),  base = 16)
+        cphysical = int(package[12], base = 16)
+        flags = int(package[13], base = 16)
+        return Sensor(dev, line, sens, current_data, last_data, accumul, cevent, cphysical, flags)
+
+event = Event()
+def comport_log():
+    connected = get_coms()
+    com_open(connected)
+    com_num = ''
+    print ('try connect to COM')
+    for element in connected:
+        print(str(element))
+        ser = serial.Serial(str(element), 57600)
+        out = ''
+        if ser.is_open:
+            print (str(element) + ' connected')
+            com_num = str(element)
+            break
+        else :
+            print (str(element) + ' not connected')
+            continue
+    if com_num != '':
+        print (ser.is_open)
+        try:
+            out = ''
+            package = []
+            while out != '7e':
+                out = ser.read().hex()
+            detectors = 0
+            while True:
+                if out == '7e':
+                    if package:
+                        package = check_package(package)
+                        nsensor = parse_pack(package) 
+                        with open('log', "a") as f:
+                            f.write(str(nsensor))
+                        f.closed
+                        package.clear()
+                        if event.is_set() :
+                            break
+                else :
+                    package.append(out)
+                out = ser.read().hex()
+                detectors += 1
+        except Exception:
+            print(Exception)
+            raise
+        finally:
+            ser.close()
+            print('close serial port')
+
+ 
+
+if __name__=="__main__":
+    try:
+        t = Thread(target=comport_log)
+        t.start()
+        time.sleep(0.2)
+        print ('Enter your commands below.\r\nInsert "exit" to leave the application.')            
+        while True :
+            ent = input(">>>> ")
+            if ent == 'exit':
+                event.set()
+                break
+        t.join()
+    except Exception:
+        print(Exception)
+        raise
