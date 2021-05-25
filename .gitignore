@@ -54,3 +54,4 @@ dkms.conf
 *.axf
 *.htm
 *.lst
+*.crf

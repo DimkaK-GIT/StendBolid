@@ -59,7 +59,6 @@ static void MX_GPIO_Init(void);
 static void MX_TIM21_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_ADC_Init(void);
-
 /* USER CODE BEGIN PFP */
 
 pwmStateHeader pwm;
@@ -69,6 +68,8 @@ extern interfaceHDLC_RX masterRX;
 
 buttonStructHeader KeyA;
 buttonStructHeader KeyB;
+
+uint16_t readADC;
 
 /* USER CODE END PFP */
 
@@ -231,24 +232,30 @@ int main(void)
 		
 		if(keystat == longPress)
 		{
-			sendAnswer(0xf0,bufAnsw,0);
+//			sendAnswer(0xf0,bufAnsw,0);
 		}
 
 		if(keystatB == longPress)
 		{
-			sendAnswer(0xf1,bufAnsw,0);
+//			sendAnswer(0xf1,bufAnsw,0);
 		}
 		if(keystat == shortPress)
 		{
-			sendAnswer(0xf2,bufAnsw,0);
+//			sendAnswer(0xf2,bufAnsw,0);
 		}
 		
 		if(keystatB == shortPress)
 		{
-			sendAnswer(0xf3,bufAnsw,0);
+//			sendAnswer(0xf3,bufAnsw,0);
 		}
 
-		/* USER CODE END WHILE */
+		HAL_ADC_Start(&hadc);	
+		HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
+		readADC = (float)HAL_ADC_GetValue(&hadc);
+		HAL_ADC_Stop(&hadc);
+		
+		
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -376,9 +383,9 @@ static void MX_TIM21_Init(void)
 
   /* USER CODE END TIM21_Init 1 */
   htim21.Instance = TIM21;
-  htim21.Init.Prescaler = 0;
+  htim21.Init.Prescaler = 3200;
   htim21.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim21.Init.Period = 65535;
+  htim21.Init.Period = 5000;
   htim21.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim21.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim21) != HAL_OK)
