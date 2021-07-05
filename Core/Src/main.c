@@ -89,8 +89,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					{
 						pwm.count = 0;
 						HAL_GPIO_WritePin(GPIOA, PWM_Pin, GPIO_PIN_SET);
-				    ProcessKey(&KeyA);
-						ProcessKey(&KeyB);
+//				    ProcessKey(&KeyA);
+//						ProcessKey(&KeyB);
 					}
 					if(pwm.count == pwm.value)
 					{
@@ -106,6 +106,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	{
 		case (uint32_t)USART2: // 433MHz
 					recHDLC(recUart);
+					if(recUart == 0x55)
+								HAL_GPIO_TogglePin(GPIOA, LED2_Pin);
+
 					HAL_UART_Receive_IT(&huart2, (void *)&recUart, 1);													
 					break;
 	}		
@@ -115,14 +118,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void sendAnswer (uint8_t Command, uint8_t* buff, uint8_t count)
 {
 	
-  HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_SET);
+
 	struct_HDLC_Header MasterHDLC;
+
+	HAL_GPIO_WritePin(res1_GPIO_Port,res1_Pin,GPIO_PIN_SET); // на передачу
+	HAL_GPIO_WritePin(SET_GPIO_Port, SET_Pin ,GPIO_PIN_SET); // на передачу
+  HAL_Delay(1);
 	MasterHDLC.ADR_DST = 0x31;
 	MasterHDLC.ADR_SRC = 0x32;
 	send_Master_HDLC (MasterHDLC,Command, (char*)buff, count);
 	
+	HAL_GPIO_WritePin(SET_GPIO_Port, SET_Pin ,GPIO_PIN_RESET); // на прием
+	HAL_GPIO_WritePin(res1_GPIO_Port,res1_Pin,GPIO_PIN_RESET); // на прием
 	
-  HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_RESET);
 	
 }
 
@@ -131,7 +139,7 @@ void led1 (uint8_t on)
 	if(on == 0)
 		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
 	else
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
 }
 
 void led2 (uint8_t on)
@@ -139,10 +147,15 @@ void led2 (uint8_t on)
 	if(on == 0)
 		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
 	else
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
 }
 
-
+void DIM_Delay(uint32_t time)
+{
+	while(time--)
+	{
+	}
+}
 
 /* USER CODE END 0 */
 
@@ -182,77 +195,100 @@ int main(void)
 	
 	pwm.countMax = 255;
 	pwm.count = 0;
-	pwm.enable = 0;
-	pwm.value = 0;
+	pwm.enable = 1;
+	pwm.value = 128;
 	pwm.state = 0;
 	
 	HAL_TIM_Base_Start_IT(&htim21);
 	HAL_UART_Receive_IT(&huart2, (void *)&recUart, 1);	
-	HAL_GPIO_WritePin(GPIOA, SET_Pin, GPIO_PIN_RESET);
 
-	KeyInit(&KeyA,KEY1_GPIO_Port,KEY1_Pin,7,250);
-	KeyInit(&KeyB,KEY2_GPIO_Port,KEY2_Pin,7,250);
+//	HAL_GPIO_WritePin(res1_GPIO_Port,res1_Pin,GPIO_PIN_RESET); // на приеме
+//	HAL_GPIO_WritePin(SET_GPIO_Port, SET_Pin ,GPIO_PIN_RESET); // на приеме
 
-	
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin | LED2_Pin, GPIO_PIN_SET);
+//	KeyInit(&KeyA,KEY1_GPIO_Port,KEY1_Pin,7,250);
+//	KeyInit(&KeyB,KEY2_GPIO_Port,KEY2_Pin,7,250);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		if(masterRX.Command != 0)
+		
+//		HAL_GPIO_TogglePin(GPIOA, LED1_Pin);
+		
+//		if(masterRX.Command != 0)
+//		{
+//			switch(masterRX.Command)
+//			{
+//				case 0x01:
+//									pwm.value = masterRX.arg[0];
+//									bufAnsw[0] = pwm.value;
+//									bufAnsw[1] = pwm.countMax;
+//									sendAnswer(masterRX.Command,bufAnsw,2);
+//									break;
+//				case 0x02:
+//									led1(masterRX.arg[0]);
+//									sendAnswer(masterRX.Command,bufAnsw,0);
+//									break;
+//				case 0x03:
+//									led2(masterRX.arg[0]);
+//									sendAnswer(masterRX.Command,bufAnsw,0);
+//									break;
+//				
+//				case 0xff:
+//									break;
+//				default:
+//									break;
+//						
+//			}
+//			masterRX.Command = 0;
+//		}
+//		uint8_t keystat = ReadKey(&KeyA);
+//		uint8_t keystatB = ReadKey(&KeyB);
+//		sendAnswer(0xf3,bufAnsw,0);
+		HAL_Delay(50);
+
+		uint8_t pinState = HAL_GPIO_ReadPin(KEY1_GPIO_Port,KEY1_Pin);
+		if(pinState == GPIO_PIN_RESET)
 		{
-			switch(masterRX.Command)
+			if(pwm.value < 255)
 			{
-				case 0x01:
-									pwm.value = masterRX.arg[0];
-									bufAnsw[0] = pwm.value;
-									bufAnsw[1] = pwm.countMax;
-									sendAnswer(masterRX.Command,bufAnsw,2);
-									break;
-				case 0x02:
-									led1(masterRX.arg[0]);
-									sendAnswer(masterRX.Command,bufAnsw,0);
-									break;
-				case 0x03:
-									led2(masterRX.arg[0]);
-									sendAnswer(masterRX.Command,bufAnsw,0);
-									break;
-				
-				case 0xff:
-									break;
-				default:
-									break;
-						
+				pwm.value++;
+//				HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_RESET);
 			}
-			masterRX.Command = 0;
 		}
-		uint8_t keystat = ReadKey(&KeyA);
-		uint8_t keystatB = ReadKey(&KeyB);
-		
-		if(keystat == longPress)
-		{
-//			sendAnswer(0xf0,bufAnsw,0);
-		}
+//		else
+//				HAL_GPIO_WritePin(LED1_GPIO_Port,LED1_Pin,GPIO_PIN_SET);
 
-		if(keystatB == longPress)
-		{
-//			sendAnswer(0xf1,bufAnsw,0);
-		}
-		if(keystat == shortPress)
-		{
-//			sendAnswer(0xf2,bufAnsw,0);
-		}
-		
-		if(keystatB == shortPress)
-		{
-//			sendAnswer(0xf3,bufAnsw,0);
-		}
 
-		HAL_ADC_Start(&hadc);	
-		HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
-		readADC = (float)HAL_ADC_GetValue(&hadc);
-		HAL_ADC_Stop(&hadc);
+		pinState = HAL_GPIO_ReadPin(KEY2_GPIO_Port,KEY2_Pin);
+		if(pinState == GPIO_PIN_RESET)
+		{
+			if(pwm.value > 0)
+			{
+				pwm.value--;
+//				HAL_GPIO_WritePin(LED2_GPIO_Port,LED2_Pin,GPIO_PIN_RESET);
+			}
+		}
+//		else
+//				HAL_GPIO_WritePin(LED2_GPIO_Port,LED2_Pin,GPIO_PIN_SET);
+
+//		if(keystat == shortPress)
+//		{
+////			sendAnswer(0xf2,bufAnsw,0);
+//		}
+//		
+//		if(keystatB == shortPress)
+//		{
+////			sendAnswer(0xf3,bufAnsw,0);
+//		}
+
+//		HAL_ADC_Start(&hadc);	
+//		HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
+//		readADC = (float)HAL_ADC_GetValue(&hadc);
+//		HAL_ADC_Stop(&hadc);
 		
 		
     /* USER CODE END WHILE */
@@ -274,17 +310,14 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_4;
-  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -293,7 +326,7 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
@@ -383,9 +416,9 @@ static void MX_TIM21_Init(void)
 
   /* USER CODE END TIM21_Init 1 */
   htim21.Instance = TIM21;
-  htim21.Init.Prescaler = 3200;
+  htim21.Init.Prescaler = 0;
   htim21.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim21.Init.Period = 5000;
+  htim21.Init.Period = 500;
   htim21.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim21.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim21) != HAL_OK)
@@ -425,7 +458,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 9600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -459,32 +492,40 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SET_Pin|PWM_Pin|LED1_Pin|LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SET_Pin|PWM_Pin|res1_Pin|LED1_Pin
+                          |LED2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : KEY1_Pin KEY2_Pin */
   GPIO_InitStruct.Pin = KEY1_Pin|KEY2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SET_Pin PWM_Pin LED1_Pin LED2_Pin */
-  GPIO_InitStruct.Pin = SET_Pin|PWM_Pin|LED1_Pin|LED2_Pin;
+  /*Configure GPIO pins : SET_Pin PWM_Pin res1_Pin */
+  GPIO_InitStruct.Pin = SET_Pin|PWM_Pin|res1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : res2_Pin res3_Pin */
+  GPIO_InitStruct.Pin = res2_Pin|res3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : res4_Pin */
+  GPIO_InitStruct.Pin = res4_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(res4_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LED1_Pin LED2_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|LED2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : res4_Pin res3_Pin res2_Pin */
-  GPIO_InitStruct.Pin = res4_Pin|res3_Pin|res2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : res1_Pin */
-  GPIO_InitStruct.Pin = res1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(res1_GPIO_Port, &GPIO_InitStruct);
 
 }
 
